@@ -11,6 +11,9 @@ namespace FrooxEngine
     public partial class Slot
     {
         public ResoniteSlot Wrapper;
+
+        // We store it explicitly, because Unity doesn't allow accessing .transform from other threads
+        public Transform Transform;
     }
 }
 
@@ -25,15 +28,25 @@ public class ResoniteSlot : MonoBehaviour
     private void Awake()
     {
         Data.Wrapper = this;
+        Data.Transform = this.transform;
     }
 }
 
 public static class SlotHelper
 {
-    public static FrooxEngine.Slot GetSlot(this Transform transform) => transform.gameObject.GetSlot();
+    public static FrooxEngine.Slot GetSlot(this Transform transform)
+    {
+        if (transform is null)
+            return null;
+
+        return transform.gameObject.GetSlot();
+    }
 
     public static FrooxEngine.Slot GetSlot(this GameObject gameObject)
     {
+        if (gameObject is null)
+            return null;
+
         var wrapper = gameObject.GetComponent<ResoniteSlot>();
 
         if (wrapper == null)
