@@ -1,5 +1,4 @@
 name: 'Build UnityPackage.'
-description: 'Builds a UnityPackage for Resonite.UnitySDK.'
 
 on:
   workflow_dispatch:
