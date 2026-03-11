@@ -22,6 +22,8 @@ public interface IConversionContext
 
     #region ASSET CONVERSION
 
+    void RunOnConverted(UnityEngine.Component component, System.Action action);
+
     IAssetProvider<FrooxEngine.Mesh> GetMesh(UnityEngine.Mesh mesh);
     IAssetProvider<FrooxEngine.ITexture> GetITexture(UnityEngine.Texture texture);
     IAssetProvider<FrooxEngine.ITexture2D> GetITexture2D(UnityEngine.Texture texture);

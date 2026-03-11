@@ -42,6 +42,8 @@ public class SceneConverter : IConversionContext
 
     AssetConversionManager _assetConverter;
 
+    Dictionary<UnityEngine.Component, List<Action>> _deferedActions = new Dictionary<UnityEngine.Component, List<Action>>();
+
     int _idPool;
     int _messageIndex;
 
@@ -255,7 +257,7 @@ public class SceneConverter : IConversionContext
 
         // Post processing
         foreach (var root in roots)
-            foreach (var postprocessor in root.GetComponentsInChildren<IResoniteLinkPostProcessor>())
+            foreach (var postprocessor in root.GetComponentsInChildren<IConversionPostProcessor>())
                 postprocessor.PostProcessConversion(this);
     }
 
@@ -418,6 +420,15 @@ public class SceneConverter : IConversionContext
                 converter.Initialize(component);
 
                 converterMap.Add(component, converter);
+
+                // Check if there's defered actions
+                if(_deferedActions.TryGetValue(component, out var list))
+                {
+                    foreach (var action in list)
+                        action();
+
+                    _deferedActions.Remove(component);
+                }
             }
 
             // Update the conversion. This should handle both cases when it was freshly added
@@ -705,4 +716,23 @@ public class SceneConverter : IConversionContext
 
     public Task<MethodResult> CallMethod(CallSyncMethod request) => Link.CallMethod(request);
     public Task<MethodResult> CallMethod(CallStaticSyncMethod request) => Link.CallStaticMethod(request);
+
+    public void RunOnConverted(UnityEngine.Component component, Action action)
+    {
+        // Check if it's already converted and run the action right away
+        if(component.GetComponents<ResoniteComponentConverter>().Any(c => c.Target == component))
+        {
+            action();
+            return;
+        }    
+
+        // This behavior hasn't been converted yet, so we need to defer this action
+        if(!_deferedActions.TryGetValue(component, out var list))
+        {
+            list = new List<Action>();
+            _deferedActions.Add(component, list);
+        }
+
+        list.Add(action);
+    }
 }
