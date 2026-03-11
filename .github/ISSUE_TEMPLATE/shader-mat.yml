@@ -1,5 +1,5 @@
-name: 'Graphical issue (Material/Shaders)'
-description: 'To report graphical issues when converting shaders and/or materials.'
+name: 'Material/Shaders issue'
+description: 'To report issues when importing shaders and/or materials.'
 
 labels: ["Material/Shader Conversion"]
 type: bug
