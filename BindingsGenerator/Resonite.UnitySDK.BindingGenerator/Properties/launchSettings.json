@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Resonite.UnitySDK.BindingGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "21213 C:\\Workspace\\Resonite\\Resonite.UnitySDK\\BindingsGenerator\\Resonite.UnitySDK.Bindings\\Generated"
+    }
+  }
+}

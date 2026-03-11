@@ -129,6 +129,8 @@ public class ResoniteLinkWindow : EditorWindow
         // The current scene can only be sent when the realtime mode isn't active
         GUI.enabled = State == ConnectionState.Connected && !_converter.IsRealtimeModeActive;
 
+        _converter.ConvertSkybox = GUILayout.Toggle(_converter.ConvertSkybox, "Convert Skybox");
+
         if (GUILayout.Button("Send Current Scene"))
             SendCurrentScene();
 

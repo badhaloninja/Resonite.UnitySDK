@@ -20,10 +20,15 @@ public class SceneConverter : IConversionContext
     public string UniqueSessionId => _window.UniqueSessionId;
     public LinkInterface Link => _window.Link;
 
+    [SerializeField]
+    public bool ConvertSkybox = true;
+
     public bool IsRealtimeModeActive { get; private set; }
 
     // TODO!!! Move this to a dedicated connection manager so the Window is only managing the UI?
     ResoniteLinkWindow _window;
+
+    SkyboxConverter _skybox = new SkyboxConverter();
 
     [SerializeField]
     Dictionary<Transform, ResoniteLink.Slot> _transformMap = new Dictionary<Transform, ResoniteLink.Slot>();
@@ -231,6 +236,9 @@ public class SceneConverter : IConversionContext
         // Ensure asset converter has been initialized
         EnsureAssetConverter();
 
+        if (ConvertSkybox)
+            _skybox.EnsureRoot();
+
         var roots = SceneManager.GetActiveScene().GetRootGameObjects();
 
         Convert(roots.Select(g => g.transform));
@@ -239,6 +247,9 @@ public class SceneConverter : IConversionContext
     public void Convert(IEnumerable<Transform> roots)
     {
         _assetConverter.BeginConversion();
+
+        if (ConvertSkybox)
+            _skybox.ConvertCurrentSkybox(this);
 
         // First update all component conversions
         foreach (var root in roots)
